@@ -19,11 +19,16 @@ import (
 func main() {
 	var yamlFile, operation string
 	flag.StringVar(&yamlFile, "file", "", "Path to the input YAML file")
-	flag.StringVar(&operation, "operation", "", "Operation type (CREATE, UPDATE, DELETE)")
+	flag.StringVar(&operation, "operation", "", "Operation type (create, update, delete)")
 	flag.Parse()
 
-	if yamlFile == "" || operation == "" {
-		log.Fatal("Usage: --file=<yaml_file> --operation=<operation>")
+	if yamlFile == "" {
+		log.Fatal("`file` parameter is mandatory: --file=<path/to/yaml/file>")
+	}
+
+	if operation == "" {
+		log.Println("no `operation` parameter passed, use `create` by default")
+		operation = "create"
 	}
 
 	data, err := os.ReadFile(yamlFile)
@@ -58,12 +63,12 @@ func createAdmissionReview(objMap map[string]interface{}, data []byte, operation
 
 	apiVersion, ok := objMap["apiVersion"].(string)
 	if !ok {
-		return nil, fmt.Errorf("failed to get apiVersion from object")
+		return nil, fmt.Errorf("failed to retrieve `apiVersion` from object")
 	}
 
 	kind, ok := objMap["kind"].(string)
 	if !ok {
-		return nil, fmt.Errorf("failed to get kind from object")
+		return nil, fmt.Errorf("failed to retrieve `kind` from object")
 	}
 
 	gvk := metav1.GroupVersionKind{
@@ -76,6 +81,8 @@ func createAdmissionReview(objMap map[string]interface{}, data []byte, operation
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert YAML to JSON: %v", err)
 	}
+
+	dryRun := true
 
 	result := &admv1.AdmissionReview{
 		TypeMeta: metav1.TypeMeta{
@@ -95,6 +102,7 @@ func createAdmissionReview(objMap map[string]interface{}, data []byte, operation
 			Object: runtime.RawExtension{
 				Raw: jsonData,
 			},
+			DryRun: &dryRun,
 		},
 	}
 
@@ -129,7 +137,7 @@ func getOperation(operation string) (admv1.Operation, error) {
 }
 
 func modifyObjectForOld(objMap map[string]interface{}) map[string]interface{} {
-	oldObjMap := make(map[string]interface{})
+	oldObjMap := make(map[string]interface{}, len(objMap))
 	for k, v := range objMap {
 		oldObjMap[k] = v
 	}

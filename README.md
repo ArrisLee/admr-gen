@@ -3,20 +3,26 @@ A tiny tool to generate kube admission review content, which can be utilized for
 
 ## Installation
 
-Use `go get` to donwload bin file, which will be saved in `$GOPATH/bin` directory.
+Use `go get` to donwload bin file, which will be installed in `$GOPATH/bin` directory.
 
 ```sh
 go get -u "github.com/ArrisLee/admr-gen"
 ```
 
-If you haven't add `bin` dir to your system `$PATH`, modify your bash profile or zshrc file by adding following lines:
+If you haven't add `bin` dir to your system `$PATH`, modify your bash profile by adding following lines:
 
 ```sh
 export GOPATH=/your/own/go/path
 export PATH=$PATH:$GOPATH/bin
 
 ```
-This will allow you to use go binaries in terminal.
+This will allow you to use installed go binaries in terminal.
+
+
+## Parameters
+
+`--file` - mandatory. Path to the input YAML file, e.g., `./deployment.yaml` or `./pod.yaml`
+`--operation` - optional. Expect operation value in admission review output, available values: `create`, `update` and `delete`. 'create' operation will be applied by default if this param is missing
 
 
 ## Usage
@@ -25,21 +31,52 @@ Pass `file` and `operation` params to generate different types of kube admission
 
 ```sh
 admr-gen --file=pod.yaml --operation=create
-admr-gen --file=pod.yaml --operation=update
-admr-gen --file=pod.yaml --operation=delete
 ```
-save output to a yaml file if needed:
+Save output to a yaml file if needed:
 
 ```sh
 admr-gen --file=pod.yaml --operation=create > example.yaml
 ```
 
-## Sample output
+
+## Example
+
+Command
+
+```sh
+admr-gen --file=./sample_yaml/pod.yaml --operation=update
+```
+
+Input
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: allowed
+  namespace: test
+spec:
+  serviceAccountName: test-user
+  containers:
+    - name: test
+      image: openpolicyagent/opa:0.9.2
+      args:
+        - "run"
+        - "--server"
+        - "--addr=localhost:8080"
+      resources:
+        limits:
+          cpu: "100m"
+          memory: "30Mi"
+```
+
+Output
 
 ```yaml
 apiVersion: admission.k8s.io/v1
 kind: AdmissionReview
 request:
+  dryRun: true
   kind:
     group: ""
     kind: Pod
@@ -63,8 +100,26 @@ request:
             cpu: 100m
             memory: 30Mi
       serviceAccountName: test-user
-  oldObject: null
-  operation: CREATE
+  oldObject:
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: allowed-old
+      namespace: test
+    spec:
+      containers:
+      - args:
+        - run
+        - --server
+        - --addr=localhost:8080
+        image: openpolicyagent/opa:0.9.2
+        name: test
+        resources:
+          limits:
+            cpu: 100m
+            memory: 30Mi
+      serviceAccountName: test-user
+  operation: UPDATE
   options: null
   requestKind:
     group: ""
@@ -74,8 +129,8 @@ request:
     group: ""
     resource: Pod
     version: v1
-  uid: 7055b44d-d66e-4a3e-a0e7-02329c52b1e0
+  uid: 8f248c68-639d-452f-a28f-3f331b001821
   userInfo:
-    uid: c717f477-06ec-4a47-93e0-0591f421ad06
+    uid: 502ab568-4acd-4776-8326-b10b5414eb6b
     username: fake-k8s-admin-review
 ```
