@@ -10,24 +10,26 @@ go get -u "github.com/ArrisLee/admr-gen"
 ```
 
 ### Add GOPATH `bin` dir to `$PATH`
-Modify your bash profile or zshrc file, add following lines
+Modify your bash profile or zshrc file, add following lines:
 
 ```sh
 export GOPATH=/your/own/go/path
 export PATH=$PATH:$GOPATH/bin
 
 ```
-This will allow you to use go binaries direcly in terminal
+This will allow you to use go binaries in terminal.
 
 
 ### Usage
 
-Pass file and operation params to generate fake kube admission review
+Pass `file` and `operation` params to generate different types of kube admission review outputs:
 
 ```sh
 admr-gen --file=pod.yaml --operation=create
+admr-gen --file=pod.yaml --operation=update
+admr-gen --file=pod.yaml --operation=delete
 ```
-or
+save output to a yaml file if needed:
 
 ```sh
 admr-gen --file=pod.yaml --operation=create > example.yaml
