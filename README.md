@@ -1,7 +1,7 @@
 # Kube Admission Review Generator
 A tiny tool to generate kube admission review content, which can be utilized for Gator/Gatekeeper testing purposes.
 
-## Install
+## Installation
 
 Use `go get` to donwload bin file, which will be saved in `$GOPATH/bin` directory.
 
