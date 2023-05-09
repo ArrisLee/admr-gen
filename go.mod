@@ -1,4 +1,4 @@
-module github.com/ArrisLee/kube-admission-review-generator
+module github.com/ArrisLee/admr-gen
 
 go 1.19
 
