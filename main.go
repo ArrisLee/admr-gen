@@ -27,7 +27,7 @@ func main() {
 	}
 
 	if operation == "" {
-		log.Println("no `operation` parameter passed, use `create` by default")
+		log.Println("no `operation` parameter passed, will use `create` by default")
 		operation = "create"
 	}
 
