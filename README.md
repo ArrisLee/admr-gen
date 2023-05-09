@@ -1,16 +1,15 @@
 # Kube Admission Review Generator
 A tiny tool to generate kube admission review content, which can be utilized for Gator/Gatekeeper testing purposes.
 
-## How to use
+## Install
 
-### Install
+Use `go get` to donwload bin file, which will be saved in `$GOPATH/bin` directory.
 
 ```sh
 go get -u "github.com/ArrisLee/admr-gen"
 ```
 
-### Add GOPATH `bin` dir to `$PATH`
-Modify your bash profile or zshrc file, add following lines:
+If you haven't add `bin` dir to your system `$PATH`, modify your bash profile or zshrc file by adding following lines:
 
 ```sh
 export GOPATH=/your/own/go/path
@@ -20,7 +19,7 @@ export PATH=$PATH:$GOPATH/bin
 This will allow you to use go binaries in terminal.
 
 
-### Usage
+## Usage
 
 Pass `file` and `operation` params to generate different types of kube admission review outputs:
 
@@ -35,7 +34,7 @@ save output to a yaml file if needed:
 admr-gen --file=pod.yaml --operation=create > example.yaml
 ```
 
-Sample output
+## Sample output
 
 ```yaml
 apiVersion: admission.k8s.io/v1
