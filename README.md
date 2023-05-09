@@ -1,28 +1,5 @@
-# Kube Admission Review Generator
-A tiny tool to generate kube admission review content, which can be utilized for Gator/Gatekeeper testing purposes.
-
-## Installation
-
-Use `go get` to donwload bin file, which will be installed in `$GOPATH/bin` directory.
-
-```sh
-go get -u "github.com/ArrisLee/admr-gen"
-```
-
-If you haven't add `bin` dir to your system `$PATH`, modify your bash profile by adding following lines:
-
-```sh
-export GOPATH=/your/own/go/path
-export PATH=$PATH:$GOPATH/bin
-
-```
-This will allow you to use installed go binaries in terminal.
-
-
-## Parameters
-
-`--file` - mandatory. Path to the input YAML file, e.g., `./deployment.yaml` or `./pod.yaml`
-`--operation` - optional. Expect operation value in admission review output, available values: `create`, `update` and `delete`. 'create' operation will be applied by default if this param is missing
+- `--file` - mandatory. Path to the input YAML file, e.g., `./deployment.yaml` or `./pod.yaml`
+- `--operation` - optional. Expect operation value in admission review output, available values: `create`, `update` and `delete`. 'create' operation will be applied by default if this param is missing
 
 
 ## Usage
