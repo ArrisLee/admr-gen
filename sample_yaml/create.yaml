@@ -1,0 +1,47 @@
+apiVersion: admission.k8s.io/v1
+kind: AdmissionReview
+request:
+  kind:
+    group: ""
+    kind: MachineConfig
+    version: machineconfiguration.openshift.io/v1
+  object:
+    apiVersion: machineconfiguration.openshift.io/v1
+    kind: MachineConfig
+    metadata:
+      annotations:
+        machineconfiguration.openshift.io/generated-by-controller-version: 8fa0b7e8903226b3cfb76e6c6f49409cfc0dd0e7
+      creationTimestamp: "2023-04-27T21:42:50Z"
+      generation: 1
+      labels:
+        machineconfiguration.openshift.io/role: master
+      name: 00-master
+      ownerReferences:
+      - apiVersion: machineconfiguration.openshift.io/v1
+        blockOwnerDeletion: true
+        controller: true
+        kind: ControllerConfig
+        name: machine-config-controller
+        uid: 22d5a96d-036d-4727-994e-f283a71d826c
+      resourceVersion: "7177"
+      uid: 3bba4e1e-30f0-4cb0-9691-7a9ef1664898
+    spec:
+      config:
+        ignition:
+          version: 3.2.0
+  oldObject: null
+  operation: CREATE
+  options: null
+  requestKind:
+    group: ""
+    kind: MachineConfig
+    version: machineconfiguration.openshift.io/v1
+  resource:
+    group: ""
+    resource: MachineConfig
+    version: machineconfiguration.openshift.io/v1
+  uid: 5d1008f6-2219-4cf9-9a18-a9ea9d7f062b
+  userInfo:
+    uid: ea75275b-d390-4d33-baf7-ba5d6ef0a3df
+    username: fake-k8s-admin-review
+
