@@ -3,7 +3,7 @@ A tiny tool to generate kube admission review content, which can be utilized for
 
 ## Installation
 
-Use `go get` to donwload bin file, which will be installed in `$GOPATH/bin` directory.
+Use `go get -u` to donwload bin file, which will be installed in `$GOPATH/bin` directory.
 
 ```sh
 go get -u "github.com/ArrisLee/admr-gen"
