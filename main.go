@@ -23,11 +23,10 @@ func main() {
 	flag.Parse()
 
 	if yamlFile == "" {
-		log.Fatal("`file` parameter is mandatory: --file=<path/to/yaml/file>")
+		log.Fatal("`file` parameter is mandatory, usage: --file=<path/to/yaml/file>")
 	}
 
 	if operation == "" {
-		log.Println("no `operation` parameter passed, will use `create` by default")
 		operation = "create"
 	}
 
