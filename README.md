@@ -3,6 +3,12 @@ A tiny tool to generate Kubernetes Admission Review Requests, which can be utili
 
 Admission Reviews in Kubernetes are part of the dynamic admission control system which are HTTP callbacks that receive admission requests and process them. They are an integral part of the Kubernetes API and are used to govern and enforce custom policies or modifications on objects.
 
+Relevant links:
+
+https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/
+
+https://open-policy-agent.github.io/gatekeeper/website/docs/gator/
+
 ## Installation
 
 Use `go get -u` to donwload bin file, which will be installed in `$GOPATH/bin` directory.
@@ -19,7 +25,6 @@ export PATH=$PATH:$GOPATH/bin
 
 ```
 This will allow you to use installed go binaries in terminal.
-
 
 ## Parameters
 
@@ -47,7 +52,8 @@ admr-gen --file=pod.yaml --operation=create --output=json > example.json
 Command
 
 ```sh
-admr-gen --file=./sample_yaml/pod.yaml --operation=update
+admr-gen --file=./pod_sample.yaml --operation=update
+admr-gen --file=./pod_sample.yaml --operation=delete --output=json
 ```
 
 Input file
@@ -145,7 +151,7 @@ Output JSON
     "kind": "AdmissionReview",
     "apiVersion": "admission.k8s.io/v1",
     "request": {
-        "uid": "83169bd9-e2bf-4db6-8b1f-848ea54fc64f",
+        "uid": "d37115b6-3de2-4ad8-b58e-0ef6cc5c71cd",
         "kind": {
             "group": "",
             "version": "v1",
@@ -161,44 +167,17 @@ Output JSON
             "version": "v1",
             "kind": "Pod"
         },
-        "operation": "UPDATE",
+        "operation": "DELETE",
         "userInfo": {
             "username": "fake-k8s-admin-review",
-            "uid": "a5b4b772-7aee-4fd4-b11f-a7ed99dfa87d"
+            "uid": "e888069a-3103-454e-8ccd-e3bb745c43ed"
         },
-        "object": {
-            "apiVersion": "v1",
-            "kind": "Pod",
-            "metadata": {
-                "name": "allowed",
-                "namespace": "test"
-            },
-            "spec": {
-                "containers": [
-                    {
-                        "args": [
-                            "run",
-                            "--server",
-                            "--addr=localhost:8080"
-                        ],
-                        "image": "openpolicyagent/opa:0.9.2",
-                        "name": "test",
-                        "resources": {
-                            "limits": {
-                                "cpu": "100m",
-                                "memory": "30Mi"
-                            }
-                        }
-                    }
-                ],
-                "serviceAccountName": "test-user"
-            }
-        },
+        "object": null,
         "oldObject": {
             "apiVersion": "v1",
             "kind": "Pod",
             "metadata": {
-                "name": "allowed-old",
+                "name": "allowed",
                 "namespace": "test"
             },
             "spec": {
