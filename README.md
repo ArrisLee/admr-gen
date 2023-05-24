@@ -28,7 +28,7 @@ This will allow you to use installed go binaries in terminal.
 
 ## Parameters
 
-- `--file` - mandatory. Path to the input YAML file, e.g., `./deployment.yaml` or `./pod.yaml`.
+- `--file` - mandatory. Path to the input resource YAML file, e.g., `./deployment.yaml` or `./pod.yaml`.
 - `--operation` - optional. Expect operation value in admission review output, available values: `create`, `update` and `delete`. There will be an extra section in the generated yaml file called `OldOBject` when using `update` or `delete` operations.`create` operation will be applied if this parameter is missing.
 - `--output` - optional. Output format can be either `json` or `yaml`. `yaml` format will be applied if this parameter is missing.
 
