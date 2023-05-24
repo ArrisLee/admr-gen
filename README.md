@@ -11,7 +11,13 @@ https://open-policy-agent.github.io/gatekeeper/website/docs/gator/
 
 ## Installation
 
-Use `go get -u` to donwload bin file, which will be installed in `$GOPATH/bin` directory.
+Binary file can be directly dowloaded in the release page [here](https://github.com/ArrisLee/admr-gen/releases)
+
+OR：
+
+Use `go get` to donwload and install the file if you have Golang env ready.
+
+The tool will be installed in `$GOPATH/bin` directory.
 
 ```sh
 go get -u "github.com/ArrisLee/admr-gen"
