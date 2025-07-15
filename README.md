@@ -1,68 +1,82 @@
 # Kube Admission Review Generator
-A tiny tool to generate Kubernetes Admission Review Requests, which can be utilized for Gatekeeper constraint/policy testing purposes (e.g., Gator test).
 
-Admission Reviews in Kubernetes are part of the dynamic admission control system which are HTTP callbacks that receive admission requests and process them. They are an integral part of the Kubernetes API and are used to govern and enforce custom policies or modifications on objects.
+**Kube Admission Review Generator** (`admr-gen`) is a command-line tool for generating Kubernetes AdmissionReview requests. It is especially useful for testing Gatekeeper constraints and policies (e.g., with Gator), or for simulating admission webhook requests in CI/CD pipelines and policy development.
 
-Relevant links:
+## Overview
 
-https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/
+Kubernetes Admission Reviews are a core part of the dynamic admission control system. They are HTTP callbacks that receive admission requests and process them, enabling custom policy enforcement and object mutation at the API server level.
 
-https://open-policy-agent.github.io/gatekeeper/website/docs/gator/
+This tool helps you generate realistic AdmissionReview objects from your resource YAMLs, supporting all major operations (`create`, `update`, `delete`) and output formats (`yaml`, `json`).
+
+**References:**
+- [Kubernetes Admission Controllers](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/)
+- [OPA Gatekeeper & Gator](https://open-policy-agent.github.io/gatekeeper/website/docs/gator/)
+
+---
+
+## Features
+
+- Generate AdmissionReview requests for any Kubernetes resource YAML
+- Supports `create`, `update`, and `delete` operations
+- Output in either YAML or JSON format
+- Simulate "oldObject" for update/delete operations
+- Useful for policy testing, CI/CD, and admission webhook development
+
+---
 
 ## Installation
 
-Binary file can be directly dowloaded in the release page [here](https://github.com/ArrisLee/admr-gen/releases)
+### Pre-built Binary
 
-OR：
+Download the latest release from the [Releases page](https://github.com/ArrisLee/admr-gen/releases).
 
-Use `go get` to donwload and install the file if you have Golang env ready.
+### Go Install
 
-The tool will be installed in `$GOPATH/bin` directory.
-
-```sh
-go get -u "github.com/ArrisLee/admr-gen"
-```
-
-If you haven't add `bin` dir to your system `$PATH`, modify your bash profile by adding following lines:
+If you have Go installed, you can install via:
 
 ```sh
-export GOPATH=/your/own/go/path
-export PATH=$PATH:$GOPATH/bin
-
+go install github.com/ArrisLee/admr-gen@latest
 ```
-This will allow you to use installed go binaries in terminal.
 
-## Parameters
+The binary will be placed in your `$GOPATH/bin` or `$HOME/go/bin` directory.
 
-- `--file` - mandatory. Path to the input resource YAML file, e.g., `./deployment.yaml` or `./pod.yaml`.
-- `--operation` - optional. Expect operation value in admission review output, available values: `create`, `update` and `delete`. There will be an extra section in the generated yaml file called `OldOBject` when using `update` or `delete` operations.`create` operation will be applied if this parameter is missing.
-- `--output` - optional. Output format can be either `json` or `yaml`. `yaml` format will be applied if this parameter is missing.
+**Tip:** Add your Go bin directory to your `PATH` if you haven't already:
 
+```sh
+export PATH=$PATH:$(go env GOPATH)/bin
+```
+
+---
 
 ## Usage
 
-Pass `file` and `operation` params to generate different types of kube admission review outputs:
+### Command-line Parameters
+
+| Parameter      | Required | Description                                                                                  |
+|----------------|----------|----------------------------------------------------------------------------------------------|
+| `--file`       | Yes      | Path to the input Kubernetes resource YAML file (e.g., `./deployment.yaml`, `./pod.yaml`)    |
+| `--operation`  | No       | Admission operation: `create`, `update`, or `delete`. Defaults to `create`.                  |
+| `--output`     | No       | Output format: `yaml` or `json`. Defaults to `yaml`.                                         |
+
+### Basic Example
+
+Generate a create AdmissionReview in YAML:
 
 ```sh
 admr-gen --file=pod.yaml --operation=create --output=yaml
 ```
-Save output into a file if needed:
+
+Generate an update AdmissionReview in JSON and save to a file:
 
 ```sh
-admr-gen --file=pod.yaml --operation=create --output=json > example.json
+admr-gen --file=pod.yaml --operation=update --output=json > admission_review.json
 ```
 
+---
 
 ## Example
 
-Command
-
-```sh
-admr-gen --file=./pod_sample.yaml --operation=update
-admr-gen --file=./pod_sample.yaml --operation=delete --output=json
-```
-
-Input file
+### Input Resource (`pod_sample.yaml`)
 
 ```yaml
 apiVersion: v1
@@ -85,7 +99,13 @@ spec:
           memory: "30Mi"
 ```
 
-Output YAML
+### Generate Update AdmissionReview
+
+```sh
+admr-gen --file=./pod_sample.yaml --operation=update --output=yaml
+```
+
+#### Output (YAML)
 
 ```yaml
 apiVersion: admission.k8s.io/v1
@@ -142,73 +162,36 @@ request:
     version: v1
   resource:
     group: ""
-    resource: Pod
+    resource: pods
     version: v1
-  uid: 8f248c68-639d-452f-a28f-3f331b001821
+  uid: <generated>
   userInfo:
-    uid: 502ab568-4acd-4776-8326-b10b5414eb6b
+    uid: <generated>
     username: fake-k8s-admin-review
 ```
 
-Output JSON
+---
 
-```json
-{
-    "kind": "AdmissionReview",
-    "apiVersion": "admission.k8s.io/v1",
-    "request": {
-        "uid": "d37115b6-3de2-4ad8-b58e-0ef6cc5c71cd",
-        "kind": {
-            "group": "",
-            "version": "v1",
-            "kind": "Pod"
-        },
-        "resource": {
-            "group": "",
-            "version": "v1",
-            "resource": "Pod"
-        },
-        "requestKind": {
-            "group": "",
-            "version": "v1",
-            "kind": "Pod"
-        },
-        "operation": "DELETE",
-        "userInfo": {
-            "username": "fake-k8s-admin-review",
-            "uid": "e888069a-3103-454e-8ccd-e3bb745c43ed"
-        },
-        "object": null,
-        "oldObject": {
-            "apiVersion": "v1",
-            "kind": "Pod",
-            "metadata": {
-                "name": "allowed",
-                "namespace": "test"
-            },
-            "spec": {
-                "containers": [
-                    {
-                        "args": [
-                            "run",
-                            "--server",
-                            "--addr=localhost:8080"
-                        ],
-                        "image": "openpolicyagent/opa:0.9.2",
-                        "name": "test",
-                        "resources": {
-                            "limits": {
-                                "cpu": "100m",
-                                "memory": "30Mi"
-                            }
-                        }
-                    }
-                ],
-                "serviceAccountName": "test-user"
-            }
-        },
-        "dryRun": true,
-        "options": null
-    }
-}
-```
+## Advanced Usage
+
+- **Update and Delete Operations:**  
+  For `update` and `delete`, the generated AdmissionReview will include an `oldObject` field, simulating the previous state of the resource.
+- **Resource Kind Mapping:**  
+  The tool automatically maps Kubernetes Kind to the correct resource name (e.g., `Pod` → `pods`).
+
+---
+
+## Contributing
+
+Contributions, issues, and feature requests are welcome!  
+Feel free to open an issue or submit a pull request.
+
+---
+
+## License
+
+This project is licensed under the MIT License.
+
+---
+
+If you have any questions or suggestions, please open an issue on the [GitHub repository](https://github.com/ArrisLee/admr-gen).
